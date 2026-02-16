@@ -22,13 +22,7 @@ require("lazy").setup({
     end,
     },
     {"nvim-treesitter/nvim-treesitter",
-    config = function()
-        require("nvim-treesitter.config").setup({
-        ensure_installed = {"c", "lua", "vim", "vimdoc", "query", "python"},
-        auto_install = true,
-        highlight = {
-            enable=true},})
-        end,
+    branch = "main",
 },
 {
     "MeanderingProgrammer/treesitter-modules.nvim",
@@ -36,6 +30,11 @@ require("lazy").setup({
     ---@module 'treesitter-modules'
     ---@type ts.mod.UserConfig
     opts = {
+      ensure_installed = {"c", "lua", "vim", "vimdoc", "query", "python"},
+      auto_install = true,
+      highlight = {
+          enable = true,
+      },
       incremental_selection = {
         enable = true,
         disable = false,
@@ -49,37 +48,22 @@ require("lazy").setup({
       },
     },
   },
-  {
+{
   "nvim-treesitter/nvim-treesitter-textobjects",
   branch = "main",
   init = function()
     -- Disable entire built-in ftplugin mappings to avoid conflicts.
     -- See https://github.com/neovim/neovim/tree/master/runtime/ftplugin for built-in ftplugins.
     vim.g.no_plugin_maps = true
-
-    -- Or, disable per filetype (add as you like)
-    -- vim.g.no_python_maps = true
-    -- vim.g.no_ruby_maps = true
-    -- vim.g.no_rust_maps = true
-    -- vim.g.no_go_maps = true
   end,
   config = function()
-    -- configuration
 require("nvim-treesitter-textobjects").setup {
   select = {
-    -- Automatically jump forward to textobj, similar to targets.vim
     lookahead = true,
-    -- You can choose the select mode (default is charwise 'v')
-    --
-    -- Can also be a function which gets passed a table with the keys
-    -- * query_string: eg '@function.inner'
-    -- * method: eg 'v' or 'o'
-    -- and should return the mode ('v', 'V', or '<c-v>') or a table
-    -- mapping query_strings to modes.
     selection_modes = {
       ['@parameter.outer'] = 'v', -- charwise
       ['@function.outer'] = 'V', -- linewise
-      -- ['@class.outer'] = '<c-v>', -- blockwise
+    ['@class.outer'] = '<c-v>', -- blockwise
     },
     -- If you set this to `true` (default is `false`) then any textobject is
     -- extended to include preceding or succeeding whitespace. Succeeding
@@ -156,7 +140,15 @@ end)
     -- Default list of enabled providers defined so that you can extend it
     -- elsewhere in your config, without redefining it, due to `opts_extend`
     sources = {
-        default = { 'lsp', 'path', 'snippets', 'buffer' }
+        default = {'lazydev', 'lsp', 'path', 'snippets', 'buffer' },
+        providers = {
+          lazydev = {
+            name = "LazyDev",
+            module = "lazydev.integrations.blink",
+            -- make lazydev completions top priority (see `:h blink.cmp`)
+            score_offset = 100,
+          },
+        },
     },
     -- (Default) Rust fuzzy matcher for typo resistance and significantly better performance
     -- You may use a lua implementation instead by using `implementation = "lua"` or fallback to the lua implementation,
@@ -166,6 +158,17 @@ end)
     fuzzy = { implementation = "prefer_rust_with_warning" }
   },
   opts_extend = { "sources.default" }
-}
+},
+ {
+    "folke/lazydev.nvim",
+    ft = "lua", -- only load on lua files
+    opts = {
+      library = {
+        -- See the configuration section for more details
+        -- Load luvit types when the `vim.uv` word is found
+        { path = "${3rd}/luv/library", words = { "vim%.uv" } },
+      },
+    },
+  },
   })
 

@@ -39,5 +39,5 @@ vim.g.mapleader = " "
 
 -- turn on program diagnostics from lsp
 vim.diagnostic.config({
-    virtual_text = true,
+    virtual_lines = true,
 })
