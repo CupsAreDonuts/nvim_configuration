@@ -34,4 +34,10 @@ vim.opt.ignorecase = true
 -- use terminal colors
 vim.opt.termguicolors = true
 
+-- define <Leader> key
 vim.g.mapleader = " "
+
+-- turn on program diagnostics from lsp
+vim.diagnostic.config({
+    virtual_text = true,
+})
