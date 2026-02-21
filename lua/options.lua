@@ -41,3 +41,5 @@ vim.g.mapleader = " "
 vim.diagnostic.config({
     virtual_lines = true,
 })
+vim.keymap.set("n", "<leader>cd", vim.cmd.Ex, { desc = "Go to project root." })
+
