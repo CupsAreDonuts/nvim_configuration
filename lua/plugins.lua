@@ -144,6 +144,9 @@ require("lazy").setup({
 			--
 			-- See :h blink-cmp-config-keymap for defining your own keymap
 			keymap = { preset = "default" },
+            snippets = {
+                preset = "default",
+            },
 
 			appearance = {
 				-- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'

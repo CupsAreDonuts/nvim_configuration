@@ -1,3 +1,6 @@
+-- define <Leader> key
+vim.g.mapleader = " "
+
 -- numbered lines with relative numbers
 vim.opt.number = true
 vim.opt.relativenumber = true
@@ -34,12 +37,7 @@ vim.opt.ignorecase = true
 -- use terminal colors
 vim.opt.termguicolors = true
 
--- define <Leader> key
-vim.g.mapleader = " "
-
 -- turn on program diagnostics from lsp
 vim.diagnostic.config({
     virtual_lines = true,
 })
-vim.keymap.set("n", "<leader>cd", vim.cmd.Ex, { desc = "Go to project root." })
-
