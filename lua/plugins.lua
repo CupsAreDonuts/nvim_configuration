@@ -285,4 +285,24 @@ require("lazy").setup({
 			},
 		},
 	},
+-- 7. Code Structure Outline Panel (PyCharm Style Structure View)
+  {
+    "stevearc/aerial.nvim",
+    tag = "v2.7.0", -- Explicitly pins to the last ultra-stable pre-0.11 release
+    dependencies = {
+      "nvim-treesitter/nvim-treesitter",
+      "nvim-tree/nvim-web-devicons"
+    },
+    config = function()
+      require("aerial").setup({
+        layout = {
+          max_width = { 40, 0.2 },
+          min_width = 30,
+          default_direction = "right",
+        },
+        highlight_on_hover = true,
+        update_events = "TextChanged,InsertLeave",
+      })
+    end,
+  },
 })

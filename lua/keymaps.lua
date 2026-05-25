@@ -20,3 +20,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 vim.keymap.set("n", "<leader>gs", function()
   require("gitsigns").toggle_signs()
 end, { desc = "Toggle Git Signs Gutter" })
+
+
+-- Toggle the structural code outline sidebar on and off
+vim.keymap.set("n", "<leader>o", "<cmd>AerialToggle!<CR>", { desc = "Toggle Code Outline" })
