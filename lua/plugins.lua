@@ -144,9 +144,9 @@ require("lazy").setup({
 			--
 			-- See :h blink-cmp-config-keymap for defining your own keymap
 			keymap = { preset = "default" },
-            snippets = {
-                preset = "default",
-            },
+			snippets = {
+				preset = "default",
+			},
 
 			appearance = {
 				-- 'mono' (default) for 'Nerd Font Mono' or 'normal' for 'Nerd Font'
@@ -213,6 +213,75 @@ require("lazy").setup({
 				lua = { "stylua" },
 				-- conform will run multiple formatters sequentially
 				python = { "isort", "black" },
+			},
+		},
+	},
+	-- 1. Real-time Git Signs in the gutter (Clean vertical bars)
+	{
+		"lewis6991/gitsigns.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		opts = {
+			signs = {
+				add = { text = "┃" },
+				change = { text = "┃" },
+				delete = { text = "_" },
+				topdelete = { text = "‾" },
+				changedelete = { text = "~" },
+				untracked = { text = "┆" },
+			},
+		},
+	},
+
+	-- 2. File Editing as a Buffer System (Oil)
+	{
+		"stevearc/oil.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
+		config = function()
+			require("oil").setup({
+				default_file_explorer = true,
+				columns = { "icon" },
+				view_options = { show_hidden = true },
+			})
+			-- Maps the minus sign to open the explorer
+			vim.keymap.set("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory in Oil" })
+		end,
+	},
+
+	-- 3. Side-by-side Git Diff Tab Interface (Command-only mode)
+	{
+		"sindrets/diffview.nvim",
+		cmd = { "DiffviewOpen", "DiffviewFileHistory" },
+		-- No keys mapped here. Use native commands: :DiffviewOpen or :DiffviewFileHistory
+		opts = {},
+	},
+
+	-- 4. PyCharm-Style Visual Branch Tree Graph
+	{
+		"isakbm/gitgraph.nvim",
+		dependencies = { "sindrets/diffview.nvim" },
+		keys = {
+			{
+				"<leader>gl",
+				function()
+					require("gitgraph").draw({}, { "log", "--all", "--date=short" })
+				end,
+				desc = "GitGraph-log",
+			},
+		},
+		opts = {
+			symbols = {
+				merge_commit = "M",
+				commit = "*",
+			},
+			format = {
+				timestamp = "%Y-%m-%d %H:%M:%S",
+				fields = { "hash", "timestamp", "author", "branch_name", "tag" },
+			},
+			hooks = {
+				-- Pressing Enter on a commit node calls the background command directly
+				on_select_commit = function(commit)
+					vim.cmd("DiffviewOpen " .. commit.hash .. "^!")
+				end,
 			},
 		},
 	},

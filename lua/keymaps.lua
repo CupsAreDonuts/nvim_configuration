@@ -1,5 +1,3 @@
-vim.keymap.set("n", "<leader>cd", vim.cmd.Ex, { desc = "Go to project root." })
-
 vim.api.nvim_create_autocmd("LspAttach", {
 	callback = function(args)
 		local opts = { buffer = args.buf, silent = true }
@@ -18,3 +16,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		end
 	end,
 })
+-- Toggle git gutter indicators on/off cleanly via Lua API
+vim.keymap.set("n", "<leader>gs", function()
+  require("gitsigns").toggle_signs()
+end, { desc = "Toggle Git Signs Gutter" })
