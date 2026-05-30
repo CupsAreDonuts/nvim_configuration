@@ -29,7 +29,7 @@ require("lazy").setup({
 		---@module 'treesitter-modules'
 		---@type ts.mod.UserConfig
 		opts = {
-			ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "python" },
+			ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query", "python" },
 			auto_install = true,
 			highlight = {
 				enable = true,
@@ -97,34 +97,53 @@ require("lazy").setup({
 			end)
 		end,
 	},
-	{
-		"neovim/nvim-lspconfig",
-		config = function()
-			-- We define the settings and call setup in one clean shot.
-			-- This is the standard way that should not trigger the traceback.
-			vim.lsp.config("pylsp", {
-				settings = {
-					pylsp = {
-						plugins = {
-							pycodestyle = { maxLineLength = 120 },
-							flake8 = { maxLineLength = 120 },
-						},
-					},
-				},
-			})
-		end,
-	},
-	{
-		"mason-org/mason.nvim",
-		opts = {},
-	},
-	{
-		"williamboman/mason-lspconfig.nvim",
-		dependencies = { "mason.nvim", "neovim/nvim-lspconfig" },
-		config = function()
-			require("mason-lspconfig").setup()
-		end,
-	},
+{
+        "neovim/nvim-lspconfig",
+        config = function()
+            vim.lsp.config("pylsp", {
+                settings = {
+                    pylsp = {
+                        plugins = {
+                            pycodestyle = { maxLineLength = 120 },
+                            flake8 = { maxLineLength = 120 },
+                        },
+                    },
+                },
+            })
+        end,
+    },
+    {
+        "williamboman/mason.nvim",
+        opts = {},
+    },
+    {
+        "williamboman/mason-lspconfig.nvim",
+        dependencies = { "mason.nvim", "neovim/nvim-lspconfig" },
+        config = function()
+            require("mason-lspconfig").setup()
+        end,
+    },
+    {
+        "WhoIsSethDaniel/mason-tool-installer.nvim",
+        dependencies = { "mason.nvim" },
+        config = function()
+            require("mason-tool-installer").setup({
+                ensure_installed = {
+                    -- Debuggers
+                    "debugpy",
+                    "codelldb",
+                    -- Language Servers
+                    "pylsp",
+                    "clangd",
+                    -- Formatters
+                    "stylua",
+                    "isort",
+                    "black",
+                },
+                auto_install = true, -- Crucial for zero-intervention porting
+            })
+        end,
+    },
 	{
 		"saghen/blink.cmp",
 		-- optional: provides snippets for the snippet source
@@ -305,4 +324,56 @@ require("lazy").setup({
       })
     end,
   },
+-- 1. Core Debug Adapter Protocol (DAP) Engine (Handles both C and Python)
+{
+  "mfussenegger/nvim-dap",
+  dependencies = {
+    "rcarriga/nvim-dap-ui",
+    "nvim-neotest/nvim-nio", -- Modern requirement for structural async UI
+  },
+  config = function()
+    local dap = require("dap")
+    local dapui = require("dapui")
+
+    -- Initialize the UI components
+    dapui.setup()
+
+    ---------------------------------------------------------------------------
+    -- C/C++ CONFIGURATION (codelldb)
+    ---------------------------------------------------------------------------
+    dap.adapters.codelldb = {
+      type = "executable",
+      command = vim.fn.stdpath("data") .. "/mason/bin/codelldb",
+    }
+
+    local native_config = {
+      {
+        name = "Launch Compiler Binary",
+        type = "codelldb",
+        request = "launch",
+        program = function()
+          return vim.fn.input("Path to executable: ", vim.fn.getcwd() .. "/", "file")
+        end,
+        cwd = "${workspaceFolder}",
+        stopOnEntry = false,
+        -- This must be true when using type = "executable" to attach standard I/O properly
+        runInTerminal = true,
+      },
+    }
+    -- Apply launch template to c and cpp
+    dap.configurations.c = native_config
+    dap.configurations.cpp = native_config
+  end,
+},
+
+-- 2. Automation Helper for Python Environments (Remains unchanged)
+{
+  "mfussenegger/nvim-dap-python",
+  dependencies = { "mfussenegger/nvim-dap" },
+  config = function()
+    -- Uses standard data path abstractions to point safely to Mason's virtualenv
+    local mason_path = vim.fn.stdpath("data") .. "/mason/packages/debugpy/venv/bin/python"
+    require("dap-python").setup(mason_path)
+  end,
+},
 })
