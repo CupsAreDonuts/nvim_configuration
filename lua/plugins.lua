@@ -29,7 +29,7 @@ require("lazy").setup({
 		---@module 'treesitter-modules'
 		---@type ts.mod.UserConfig
 		opts = {
-			ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query", "python" },
+			ensure_installed = { "c", "cpp", "lua", "vim", "vimdoc", "query", "python", "latex"},
 			auto_install = true,
 			highlight = {
 				enable = true,
