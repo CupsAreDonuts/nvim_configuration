@@ -376,4 +376,49 @@ require("lazy").setup({
     require("dap-python").setup(mason_path)
   end,
 },
+{
+  "olimorris/codecompanion.nvim",
+  dependencies = {
+    "nvim-lua/plenary.nvim",
+    "nvim-treesitter/nvim-treesitter",
+  },
+  config = function()
+    require("codecompanion").setup({
+        interactions = {
+            chat = {
+                opts = {
+                    context_management = {
+                        enabled = true,
+                        editing = {trigger = 1000000},
+                        compaction = {trigger = 1500000},
+                    },
+                },
+            },
+        },
+      adapters = {
+        http = {
+          -- Extend the built-in "deepseek" adapter
+          deepseek = function()
+            return require("codecompanion.adapters").extend("deepseek", {
+              env = {
+                api_key = "DEEPSEEK_API_KEY",
+              },
+              schema = {
+                model = {
+                  default = "deepseek-chat", -- Or "deepseek-coder"
+                },
+              },
+            })
+          end,
+        },
+      },
+      strategies = {
+        -- Use DeepSeek for all interaction types
+        chat = { adapter = "deepseek" },
+        inline = { adapter = "deepseek" },
+        agent = { adapter = "deepseek" }, -- Note: DeepSeek's native tool-calling for agents may be limited
+      },
+    })
+  end,
+},
 })

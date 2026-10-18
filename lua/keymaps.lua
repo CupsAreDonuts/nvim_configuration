@@ -60,3 +60,15 @@ vim.keymap.set("n", "<F12>", dap.step_out, { desc = "Debug: Step Out" })
 
 -- Leader b attaches/detaches a structural breakpoint on your active cursor line
 vim.keymap.set("n", "<leader>b", dap.toggle_breakpoint, { desc = "Debug: Toggle Breakpoint" })
+
+
+-- CodeCompanion -- 
+local map = vim.keymap.set
+-- Toggle chat window (most common)
+map({ "n", "v" }, "<leader>cc", "<cmd>CodeCompanionChat Toggle<cr>", { desc = "CodeCompanion: Toggle Chat" })
+
+-- Inline edit on visual selection
+map("v", "<leader>ci", ":CodeCompanion<space>", { desc = "CodeCompanion: Inline Edit" })
+
+-- Action palette (discover all commands)
+map({ "n", "v" }, "<leader>ca", "<cmd>CodeCompanionActions<cr>", { desc = "CodeCompanion: Actions" })
